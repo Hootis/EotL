@@ -1,30 +1,15 @@
+#include  <ansi.h>
 inherit AnsiTellCode;
-#include <ansi.h>
+string shad;
 
-object me;
-
-has_sloop_shadow() { return 1; }
-
-void do_sloop(int time)
+void sh_init(object ob )
 {
-    call_out("remove_sloop_shadow", time );
+    string shad=" [slooped]";
+    shadow( ob, 1 );
+    return;
 }
 
-sh_init(object who, int time)
+string short()
 {
-    me = who;
-    shadow( me, 1 );
-    do_sloop(time);
-}
-
-void remove_sloop_shadow()
-{
-    ansi_tell(me, "You are no longer being slooped".BOLD_GREEN );
-    remove_shadow( THISO );
-    destruct( THISO );
-}
-
-short()
-{
-    return me->short() + BOLD_GREEN" [slooped]";
+    return( query_shadowing(THISO)->short() )+ BOLD_GREEN"" + shad + "" NORM;
 }
