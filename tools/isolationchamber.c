@@ -35,3 +35,32 @@ void extra_create()
             "no doubt contains ice. Just about any drink that you could "
         ]));
 }
+
+object host;
+object find_shadows( object ob, string shadow_name )
+{
+    host=query_shadowing(THISO);
+    return host;
+}
+
+object query_sloop( object victim )
+{
+    if( find_shadows( victim, "/usr/gon/tools/sloop_shad")
+    {
+        return 1;
+    }
+    return 0;
+}
+
+void enter_signal(object item, object oldenv, object mover, int pass)
+{
+     if( objectp( item ) && is_wizard( item ) )
+    {
+       if( query_sloop( item) )
+       {
+            tell_object( THISP, strformat( "You feel a release of pressure "
+                "as you enter the isolation chamber. All other sounds seem "
+                "to diminish and the outside world seems to fade away."));
+        }
+    }
+}
