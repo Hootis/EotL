@@ -1,22 +1,12 @@
-#include <acme.h>
-static inherit AcmeShadow;
-#include AcmeShadowInc
+// Query if player has sloop shadow on them
+// Gon
+// 2017 - 04
 
+// Declared Functions
+int query_sloop();
 
-int valid_query_sloop( object ob )
-{
-
-}
-
-object query_sloop( object victim )
-{
-    if( find_shadows( victim, "/usr/gon/tools/sloop_shad")
-    {
-        tell_object( THISP, strformat( "Sloop-a-doop!"));)
-    }
-}
-
-object *find_shadows( object host, string progname )
-{
-
+// Find if target has sloop shadow and return 1
+int query_sloop( object victim ) {
+    return sizeof( filter( shadow_list( victim ), (: if(blueprint($1) == FINDO(
+        "/usr/gon/tools/sloop_shad" ) ) ); :) );
 }
