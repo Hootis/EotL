@@ -7,11 +7,12 @@ inherit AnsiTellCode;
 
 #include <ansi.h>
 
-#define SLOOPEE "/usr/gon/tools/sloopee_shad"
-#define SLOOPER "/usr/gon/tools/slooper_shad"
+#define SLOOPEE_SHAD "/usr/gon/tools/sloopee_shad"
+#define SLOOPER_SHAD "/usr/gon/tools/slooper_shad"
 
 // Functions
-void do_sloop();
+int query_sloop();
+int do_sloop();
 int do_touch();
 int do_gaze();
 
@@ -21,9 +22,9 @@ void extra_create() {
         "a sphere" }) );
     set_long( "The sphere is glowing a deep purple that "
         "seems to pulse rhythmically, almost as if the object "
-        "was taking breath. The surface appears to be smooth "
+        "was breathing. The surface appears to be smooth "
         "and without any marks. It makes you slightly uneasy "
-        "as you look upon it, almost as if it was aware of your "
+        "as you look upon it, almost as if it were aware of your "
         "presence..." );
     set_gettable( 0 );
 }
@@ -35,29 +36,40 @@ extra_init() {
 }
 
 // Apply Slooper and Sloopee shadows, respectively
-void do_sloop( string sloopee ) {
+int do_sloop( string arg ) {
     object slooper = THISP;
     object shad, shadtwo;
 
-    if ( !sloopee ) {
-        ansi_tell( slooper, "What do you want to sloop?", BOLD_PURPLE );
+    if ( !arg && !FINDP( arg ) ) {
+        ansi_tell( slooper, "You can only sloop a living being.", BOLD_PURPLE );
+        return 1;
     }
-    else if ( IsWizard( slooper ) {
-        if ( GetOrdLevel ( slooper ) <= GetOrdLevel( FINDP( sloopee ) ) {
-            ansi_tell( slooper, "You have not the power to sloop "
-             + capitalize( FINDP( sloopee) ), BOLD_PURPLE );
+    if ( IsWizard( slooper ) && FINDP( arg ) ) {
+        if ( GetOrdLevel( slooper ) <= GetOrdLevel( FINDP( arg ) ) ) {
+            if ( slooper == FINDP( arg ) ) {
+                ansi_tell( slooper, "Why would you sloop yourself?", BOLD_PURPLE );
+                return 1;
+            }
+            else {
+                ansi_tell( slooper, sprintf("You have not the power to sloop %s" 
+                ,FINDP( arg )->query_name() ), BOLD_PURPLE );
+            return 1;
+            }
         }
         else {
-            ansi_tell( FINDP( to_string( slooper) ), "Wubba Lubba Dub Dub, it's a sloop-a-doop, "
+            ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
                 "scoobily-doop-dup", BOLD_PURPLE);
-            shad = clone_object( SLOOPER );
+            shad = clone_object( SLOOPER_SHAD );
             shad -> sh_init( slooper );
-            shadtwo = clone_object( SLOOPEE );
-            shadtwo -> sh_init( sloopee );
-            ansi_tell( FINDP( to_string( sloopee ) ), capitalize( slooper ) + " has taken a special "
-                "interest in you." );
+            shadtwo = clone_object( SLOOPEE_SHAD );
+            shadtwo -> sh_init( FINDP( arg ) );
+            ansi_tell( FINDP( arg ), sprintf( "%s has taken a special interest in "
+                "you.",slooper->query_name() ), BOLD_PURPLE );
+            return 0;
         }
     }
+    ansi_tell( slooper, "You can only sloop a living being.", BOLD_PURPLE );
+    return 1;
 }
 
 // Touching the sphere
