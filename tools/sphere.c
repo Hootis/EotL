@@ -37,40 +37,39 @@ extra_init() {
 
 // Apply Slooper and Sloopee shadows, respectively
 int do_sloop( string arg ) {
+    if ( !arg ) {
+        return notify_fail( "What do you want to sloop?" );
+    }
     object slooper = THISP;
-    object shad, shadtwo;
-
-    if ( !arg && !FINDP( arg ) ) {
-        ansi_tell( slooper, "You can only sloop a living being.", BOLD_PURPLE );
+    if ( !IsWizard( slooper ) ) {
+        return notify_fail( "You cannot summon the power needed." );
+    }
+    object sloopee = FINDP ( arg );
+    if ( !sloopee ) {
+        return notify_fail( "You can only sloop a player." );
+    }
+    if ( slooper == sloopee ) {
+        return notify_fail( "Your head begins to spin and you quickly look away "
+            "from the sphere. Maybe you shouldn't try slooping yourself?" );
+    }
+    if ( GetOrdLevel( slooper ) <= GetOrdLevel( sloopee ) ) {
+        ansi_tell( slooper, sprintf("You have not the power to sloop %s" 
+                ,FINDP( arg )->query_name() ), BOLD_PURPLE );
         return 1;
     }
-    if ( IsWizard( slooper ) && FINDP( arg ) ) {
-        if ( GetOrdLevel( slooper ) <= GetOrdLevel( FINDP( arg ) ) ) {
-            if ( slooper == FINDP( arg ) ) {
-                ansi_tell( slooper, "Why would you sloop yourself?", BOLD_PURPLE );
-                return 1;
-            }
-            else {
-                ansi_tell( slooper, sprintf("You have not the power to sloop %s" 
-                ,FINDP( arg )->query_name() ), BOLD_PURPLE );
-            return 1;
-            }
-        }
-        else {
-            ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
-                "scoobily-doop-dup", BOLD_PURPLE);
-            shad = clone_object( SLOOPER_SHAD );
-            shad -> sh_init( slooper );
-            shadtwo = clone_object( SLOOPEE_SHAD );
-            shadtwo -> sh_init( FINDP( arg ) );
-            ansi_tell( FINDP( arg ), sprintf( "%s has taken a special interest in "
+    else {
+        object slooper_name, slooped_name;
+        ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
+            "scoobily-doop-dup.", BOLD_PURPLE );
+        slooper_name = clone_object( SLOOPER_SHAD );
+        slooper_name-> sh_init( slooper );
+        slooped_name = clone_object( SLOOPEE_SHAD );
+        slooped_name-> sh_init( sloopee );
+        ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
                 "you.",slooper->query_name() ), BOLD_PURPLE );
-            return 0;
-        }
+        return 1;
     }
-    ansi_tell( slooper, "You can only sloop a living being.", BOLD_PURPLE );
-    return 1;
-}
+}    
 
 // Touching the sphere
 int do_touch( string str ) {
