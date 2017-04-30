@@ -11,7 +11,7 @@ inherit AnsiTellCode;
 #define SLOOPER_SHAD "/usr/gon/tools/slooper_shad"
 
 // Functions
-int query_sloop();
+string find_sloop_shadow();
 int do_sloop();
 int do_touch();
 int do_gaze();
@@ -38,37 +38,35 @@ extra_init() {
 // Apply Slooper and Sloopee shadows, respectively
 int do_sloop( string arg ) {
     if ( !arg ) {
-        return notify_fail( "What do you want to sloop?" );
+        return notify_fail( "What do you want to sloop?\n" );
     }
     object slooper = THISP;
     if ( !IsWizard( slooper ) ) {
-        return notify_fail( "You cannot summon the power needed." );
+        return notify_fail( "You cannot summon the power needed.\n" );
     }
-    object sloopee = FINDP ( arg );
+    object sloopee = FINDP( arg );
     if ( !sloopee ) {
-        return notify_fail( "You can only sloop a player." );
+        return notify_fail( "You can only sloop a player.\n" );
     }
     if ( slooper == sloopee ) {
         return notify_fail( "Your head begins to spin and you quickly look away "
-            "from the sphere. Maybe you shouldn't try slooping yourself?" );
+            "from the sphere. Maybe you shouldn't try slooping yourself?\n" );
     }
     if ( GetOrdLevel( slooper ) <= GetOrdLevel( sloopee ) ) {
         ansi_tell( slooper, sprintf("You have not the power to sloop %s" 
                 ,FINDP( arg )->query_name() ), BOLD_PURPLE );
         return 1;
     }
-    else {
-        object slooper_name, slooped_name;
-        ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
-            "scoobily-doop-dup.", BOLD_PURPLE );
-        slooper_name = clone_object( SLOOPER_SHAD );
-        slooper_name-> sh_init( slooper );
-        slooped_name = clone_object( SLOOPEE_SHAD );
-        slooped_name-> sh_init( sloopee );
-        ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
-                "you.",slooper->query_name() ), BOLD_PURPLE );
-        return 1;
-    }
+    object add_slooper_shadow, add_slooped_shadow;
+    ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
+        "scoobily-doop-dup.", BOLD_PURPLE );
+    add_slooper_shadow = clone_object( SLOOPER_SHAD );
+    add_slooper_shadow-> sh_init( slooper );
+    add_slooped_shadow = clone_object( SLOOPEE_SHAD );
+    add_slooped_shadow-> sh_init( sloopee );
+    ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
+            "you.",slooper->query_name() ), BOLD_PURPLE );
+    return 1;
 }    
 
 // Touching the sphere
@@ -79,4 +77,32 @@ int do_touch( string str ) {
 // Gazing into the Sphere
 int do_gaze( string str ) {
 
+}
+
+/**
+ *  Function finds and returns the sloop shadow based on the
+ *  string passed.
+ *  @param {String} sloop_type : valid values either "slooper" or "slooped"
+ *  @param {Object} ob :  player object to test for shadows
+ *  @return {Object} : returns the shadow object
+ */
+
+string find_sloop_shadow( string sloop_type, object ob ) {
+    if ( sloop_type != "slooper" || sloop_type != "slooped" ) {
+        return 0;
+    }
+    if (! ob ) {
+        return 0;
+    }
+    object *list_shadows = shadow_list( ob );
+    int i;
+    for ( i = 0; i <= sizeof( list_shadows ); i += 1  ) {
+        string shadow_name = program_name( list_shadows[i] );
+        if ( shadow_name == SLOOPER_SHAD ) {
+            return shadow_name;
+        }
+        if ( shadow_name == SLOOPEE_SHAD ) {
+            return shadow_name;
+        }
+    }
 }
