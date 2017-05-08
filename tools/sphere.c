@@ -11,7 +11,12 @@ inherit AnsiTellCode;
 #define SLOOPER_SHAD "/usr/gon/tools/slooper_shad"
 
 // Functions
-string find_sloop_shadow();
+object * find_slooper_shadow( object ob );
+object * find_sloopee_shadow( object ob );
+void add_slooper_shadow( object ob );
+void add_sloopee_shadow( object ob );
+void dest_slooper_shadow( object ob );
+void dest_sloopee_shadow( object ob );
 int do_sloop();
 int do_touch();
 int do_gaze();
@@ -35,7 +40,14 @@ extra_init() {
     add_action( "do_touch", "touch" );
 }
 
-// Apply Slooper and Sloopee shadows, respectively
+/**
+ * Adds sloop action to player actions. Slooping a target successfully
+ * will add the Slooper shadow to actor and the Sloopee shadow to
+ * victim. If the victim is already being slooped, it will instead remove
+ * the shadow.
+ * @param  {String} arg           Victim
+ * @return {Int}        
+ */
 int do_sloop( string arg ) {
     if ( !arg ) {
         return notify_fail( "What do you want to sloop?\n" );
@@ -57,15 +69,21 @@ int do_sloop( string arg ) {
                 ,FINDP( arg )->query_name() ), BOLD_PURPLE );
         return 1;
     }
-    object add_slooper_shadow, add_slooped_shadow;
+    if ( find_slooper_shadow( slooper ) && ! find_sloopee_shadow( sloopee ) ) {
+        ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
+            "you.",slooper->query_name() ), BOLD_PURPLE );
+        add_sloopee_shadow( sloopee );
+    return 1;
+    }
+    if ( find_slooper_shadow( slooper ) && find_sloopee_shadow( sloopee ) ) {
+
+    }
     ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
         "scoobily-doop-dup.", BOLD_PURPLE );
-    add_slooper_shadow = clone_object( SLOOPER_SHAD );
-    add_slooper_shadow-> sh_init( slooper );
-    add_slooped_shadow = clone_object( SLOOPEE_SHAD );
-    add_slooped_shadow-> sh_init( sloopee );
+    add_slooper_shadow( slooper );
     ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
             "you.",slooper->query_name() ), BOLD_PURPLE );
+    add_sloopee_shadow( sloopee );
     return 1;
 }    
 
@@ -87,22 +105,22 @@ int do_gaze( string str ) {
  *  @return {Object} : returns the shadow object
  */
 
-string find_sloop_shadow( string sloop_type, object ob ) {
-    if ( sloop_type != "slooper" || sloop_type != "slooped" ) {
-        return 0;
-    }
-    if (! ob ) {
-        return 0;
-    }
-    object *list_shadows = shadow_list( ob );
-    int i;
-    for ( i = 0; i <= sizeof( list_shadows ); i += 1  ) {
-        string shadow_name = program_name( list_shadows[i] );
-        if ( shadow_name == SLOOPER_SHAD ) {
-            return shadow_name;
-        }
-        if ( shadow_name == SLOOPEE_SHAD ) {
-            return shadow_name;
-        }
-    }
+object * find_slooper_shadow( object ob  ) {
+    object *str_shadows = shadow_list( ob );
+    return filter( str_shadows, (: if ( program_name( $1 ) == SLOOPER_SHAD) return 1; :) ); 
+}
+
+object * find_sloopee_shadow( object ob ) {
+    object *str_shadows = shadow_list( ob );
+    return filter( str_shadows, (: if ( program_name( $1 ) == SLOOPEE_SHAD) return 1; :) ); 
+}
+
+void add_slooper_shadow( object ob ) {
+    object shadow = clone_object( SLOOPER_SHAD );
+    shadow->sh_init( ob );
+}
+
+void add_slooped_shadow( object ob ) {
+    object shadow = clone_object( SLOOPEE_SHAD );
+    shadow->sh_int( ob );
 }
