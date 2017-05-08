@@ -69,14 +69,18 @@ int do_sloop( string arg ) {
                 ,FINDP( arg )->query_name() ), BOLD_PURPLE );
         return 1;
     }
-    if ( find_slooper_shadow( slooper ) && ! find_sloopee_shadow( sloopee ) ) {
+    if ( sizeof( find_slooper_shadow( slooper ) ) && ! sizeof( find_sloopee_shadow( sloopee ) ) ) {
+        ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
+        "scoobily-doop-dup.", BOLD_PURPLE );
         ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
             "you.",slooper->query_name() ), BOLD_PURPLE );
         add_sloopee_shadow( sloopee );
-    return 1;
+        return 1;
     }
-    if ( find_slooper_shadow( slooper ) && find_sloopee_shadow( sloopee ) ) {
-
+    if ( sizeof( find_slooper_shadow( slooper ) ) && sizeof( find_sloopee_shadow( sloopee ) ) ) {
+        ansi_tell( slooper, sprintf("You are already slooping %s"
+            ,FINDP( arg )->query_name() ), BOLD_PURPLE );
+        return 1;
     }
     ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
         "scoobily-doop-dup.", BOLD_PURPLE );
@@ -120,7 +124,7 @@ void add_slooper_shadow( object ob ) {
     shadow->sh_init( ob );
 }
 
-void add_slooped_shadow( object ob ) {
+void add_sloopee_shadow( object ob ) {
     object shadow = clone_object( SLOOPEE_SHAD );
-    shadow->sh_int( ob );
+    shadow->sh_init( ob );
 }
