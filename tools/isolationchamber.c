@@ -5,6 +5,8 @@ inherit RoomPlusCode;
 
 #include <ansi.h>
 
+#define SLOOP_FUNCTIONS "/usr/gon/tools/sphere"
+
 void extra_create() {
 
     set( "short", "Inside the Isolation Chamber" ); 
@@ -37,10 +39,13 @@ void extra_create() {
 }
 
 void enter_signal( object item, object oldenv, object mover, int pass ) {
-     if ( objectp( item ) && is_wizard( item ) )
+     if ( objectp( item ) )
     {
        tell_object( item, strformat( "You feel a release of pressure "
             "as you enter the isolation chamber. All other sounds seem "
             "to diminish and the outside world seems to fade away.") );
+       if ( sizeof( SLOOP_FUNCTIONS->find_sloopee_shadow( item ) ) ) {
+            SLOOP_FUNCTIONS->dest_sloopee_shadow( item );
+       }
     }
 }
