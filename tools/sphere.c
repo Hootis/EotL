@@ -4,6 +4,7 @@
 
 inherit NewThingCode;
 inherit AnsiTellCode;
+inherit "/usr/gon/tools/sloop";
 
 #include <ansi.h>
 
@@ -11,15 +12,9 @@ inherit AnsiTellCode;
 #define SLOOPER_SHAD "/usr/gon/tools/slooper_shad"
 
 // Functions
-object * find_slooper_shadow( object ob );
-object * find_sloopee_shadow( object ob );
-void add_slooper_shadow( object ob );
-void add_sloopee_shadow( object ob );
-void dest_slooper_shadow( object ob );
-void dest_sloopee_shadow( object ob );
-int do_sloop();
-int do_touch();
-int do_gaze();
+int do_sloop( string arg );
+int do_touch( string str );
+int do_gaze( string str );
 
 void extra_create() {
     set_short( "A Glowing Sphere" );
@@ -45,8 +40,8 @@ extra_init() {
  * will add the Slooper shadow to actor and the Sloopee shadow to
  * victim. If the victim is already being slooped, it will instead remove
  * the shadow.
- * @param  {String} arg           Victim
- * @return {Int}        
+ * @param  arg           Victim
+ * @return int        
  */
 int do_sloop( string arg ) {
     if ( !arg ) {
@@ -105,42 +100,4 @@ int do_touch( string str ) {
 // Gazing into the Sphere
 int do_gaze( string str ) {
 
-}
-
-/**
- *  Function finds and returns the sloop shadow based on the
- *  string passed.
- *  @param {String} sloop_type : valid values either "slooper" or "slooped"
- *  @param {Object} ob :  player object to test for shadows
- *  @return {Object} : returns the shadow object
- */
-
-object * find_slooper_shadow( object ob  ) {
-    object *str_shadows = shadow_list( ob );
-    return filter( str_shadows, (: if ( program_name( $1 ) == SLOOPER_SHAD) return 1; :) ); 
-}
-
-object * find_sloopee_shadow( object ob ) {
-    object *str_shadows = shadow_list( ob );
-    return filter( str_shadows, (: if ( program_name( $1 ) == SLOOPEE_SHAD) return 1; :) ); 
-}
-
-void add_slooper_shadow( object ob ) {
-    object shadow = clone_object( SLOOPER_SHAD );
-    shadow->sh_init( ob );
-}
-
-void add_sloopee_shadow( object ob ) {
-    object shadow = clone_object( SLOOPEE_SHAD );
-    shadow->sh_init( ob );
-}
-
-void dest_slooper_shadow( object ob ) {
-    object * arr = find_slooper_shadow( ob );
-    remove_shadow( arr[0] );
-}
-
-void dest_sloopee_shadow( object ob ) {
-    object * arr = find_sloopee_shadow( ob );
-    remove_shadow( arr[0] );
 }
