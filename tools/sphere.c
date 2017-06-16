@@ -61,9 +61,7 @@ int do_sloop( string arg ) {
                 ,FINDP( arg )->query_name() ), BOLD_PURPLE );
         return 1;
     }
-    /**
-     * If already slooping victim, instead remove both shadows
-     */
+    // If already slooping victim, instead remove both shadows
     if ( sizeof( find_slooper_shadow( slooper ) ) && sizeof( find_sloopee_shadow( sloopee ) ) ) {
         ansi_tell( slooper, sprintf( "You stop slooping %s", sloopee->query_name() ), BOLD_PURPLE );
         dest_slooper_shadow( slooper );
@@ -72,12 +70,22 @@ int do_sloop( string arg ) {
         dest_sloopee_shadow( sloopee );
         return 1;
     }
+    // initiator has slooper shadow already (add only sloopee shadow )
     if ( sizeof( find_slooper_shadow( slooper ) ) && ! sizeof( find_sloopee_shadow( sloopee ) ) ) {
         ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
-        "scoobily-doop-dup.", BOLD_PURPLE );
+            "scoobily-doop-dup.", BOLD_PURPLE );
         ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
             "you.",slooper->query_name() ), BOLD_PURPLE );
         add_sloopee_shadow( sloopee );
+        return 1;
+    }
+    // Victim has sloopee shadow already (add only slooper shadow )
+    if ( ! sizeof( find_slooper_shadow( slooper ) ) && sizeof( find_sloopee_shadow( sloopee ) ) ) {
+        ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "
+            "scoobily-doop-dup.", BOLD_PURPLE );
+        add_slooper_shadow( slooper );
+        ansi_tell( sloopee, sprintf( "%s has taken a special interest in "
+            "you.",slooper->query_name() ), BOLD_PURPLE );
         return 1;
     }
     ansi_tell( slooper, "Wubba Lubba Dub Dub! It's a sloop-a-doop, "

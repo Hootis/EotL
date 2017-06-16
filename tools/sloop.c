@@ -16,6 +16,8 @@ void add_slooper_shadow( object ob );
 void add_sloopee_shadow( object ob );
 void dest_slooper_shadow( object ob );
 void dest_sloopee_shadow( object ob );
+object find_slooper_shadow( object ob );
+object find_sloopee_shadow( object ob );
 
 /**
  * Function filters all shdow objects and returns a filtered array of shadows
@@ -28,6 +30,24 @@ protected object * query_sloop_shadows( object ob, string str ) {
     object * shadow_ob = shadow_list( ob );
     return filter( shadow_ob, (: return ( program_name( $1 ) == $2 ); :), str );
 }
+
+/**
+ * Calls query_sloop_shadows passing SLOOPER_SHAD
+ * @param  object ob            Object to check for SLOOPER_SHAD
+ * @return        Filtered object from query_sloop_shadows()
+ */
+object find_slooper_shadow( object ob ) {
+    query_sloop_shadows( ob, SLOOPER_SHAD );
+}
+
+/**
+ * Calls query_sloop_shadows passing SLOOPEE_SHAD
+ * @param  object ob            Object to check for SLOOPEE_SHAD
+ * @return        Filtered object from query_sloop_shadows()
+ */
+object find_sloopee_shadow( object ob ) {
+    query_sloop_shadows( ob, SLOOPEE_SHAD );
+} 
 
 /**
  * Clones the shadow object (path of str) and applies it to ob
