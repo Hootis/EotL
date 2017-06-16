@@ -8,9 +8,6 @@ inherit "/usr/gon/tools/sloop";
 
 #include <ansi.h>
 
-#define SLOOPEE_SHAD "/usr/gon/tools/sloopee_shad"
-#define SLOOPER_SHAD "/usr/gon/tools/slooper_shad"
-
 // Functions
 int do_sloop( string arg );
 int do_touch( string str );
